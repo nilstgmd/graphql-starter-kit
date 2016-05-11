@@ -1,5 +1,7 @@
 # graphql-starter-kit
 
+Golang implementation of https://github.com/apollostack/apollo-starter-kit.
+
 ## Schema
 
 ```go
