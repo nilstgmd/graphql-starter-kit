@@ -110,6 +110,10 @@ func main() {
 	// serve a GraphQL endpoint at `/graphql`
 	http.Handle("/graphql", handler)
 
+	// serve a graphiql IDE
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/", fs)
+
 	go func() {
 		log.Println("Starting GraphQL Server on localhost:8080")
 		http.ListenAndServe(":8080", nil)
