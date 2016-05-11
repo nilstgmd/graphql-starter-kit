@@ -1,6 +1,6 @@
 # graphql-starter-kit
 
-Golang implementation of https://github.com/apollostack/apollo-starter-kit.
+Golang implementation of [Tutorial: How to build a GraphQL server](https://medium.com/apollo-stack/tutorial-building-a-graphql-server-cddaa023c035#.wy5h1htxs).
 
 ## Schema
 
