@@ -16,7 +16,7 @@ import (
 )
 
 // Host is the connection string for MongoDB.
-const Host string = "localhost"
+const Host string = "mongo"
 
 func init() {
 	s1 := rand.NewSource(time.Now().UnixNano())

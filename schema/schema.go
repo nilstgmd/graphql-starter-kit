@@ -58,7 +58,7 @@ var authorType = graphql.NewObject(graphql.ObjectConfig{
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				var results []Post
 
-				session, err := mgo.Dial("localhost")
+				session, err := mgo.Dial("mongo")
 				if err != nil {
 					log.Fatal(err)
 				}

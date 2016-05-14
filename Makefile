@@ -38,4 +38,8 @@ dockerbuild:
 
 .PHONY: dockerrun
 dockerrun:
-	@docker run -d -p 8080:8080 --name $(BINARY) $(TAG)
+	@docker run -d -p 8080:8080 --name $(BINARY) --link mongo:mongo $(TAG)
+
+.PHONY: mongo
+mongo:
+	@docker run --name mongo -d mongo
