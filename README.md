@@ -11,7 +11,7 @@ go get github.com/nilstgmd/graphql-starter-kit
 
 Start the Docker container running the GraphQL server:
 ```
-cd $GO_PATH/github.com/nilstgmd/graphql-starter-kit && make docker
+cd  $GOPATH/src/github.com/nilstgmd/graphql-starter-kit/ && make docker
 ```
 Use the GraphiQL IDE in your browser `http://localhost:8080/` or the API `http://localhost:8080/graphql?query=...` to execute queries against the server.
 
