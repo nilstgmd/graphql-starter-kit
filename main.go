@@ -2,108 +2,47 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
 
-	"github.com/graphql-go/graphql"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/graphql-go/handler"
+	"github.com/nilstgmd/graphql-starter-kit/schema"
 )
 
-// Cookie containing fortunes.
-type Cookie struct {
-	Fortune Fortune `json:"fortune"`
-}
-
-// Fortune contains the message.
-type Fortune struct {
-	Message string `json:"message"`
-}
-
-// Post representation.
-type Post struct {
-	Title string `json:"title"`
-	Views string `json:"views"`
-}
-
-// PostList represents multiple Posts.
-var PostList []Post
-
-var postType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Post",
-	Fields: graphql.Fields{
-		"title": &graphql.Field{
-			Type: graphql.String,
-		},
-		"views": &graphql.Field{
-			Type: graphql.String,
-		},
-	},
-})
-
-var authorType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Author",
-	Fields: graphql.Fields{
-		"firstName": &graphql.Field{
-			Type: graphql.String,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return "Peter", nil
-			},
-		},
-		"lastName": &graphql.Field{
-			Type: graphql.String,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return "Lustig", nil
-			},
-		},
-		"posts": &graphql.Field{
-			Type:        graphql.NewList(postType),
-			Description: "List of todos",
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return PostList, nil
-			},
-		},
-	},
-})
-
-var queryType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "RootQuery",
-	Fields: graphql.Fields{
-		"author": &graphql.Field{
-			Type: authorType,
-			Args: graphql.FieldConfigArgument{
-				"firstName": &graphql.ArgumentConfig{
-					Type: graphql.String,
-				},
-				"lastName": &graphql.ArgumentConfig{
-					Type: graphql.String,
-				},
-			},
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				firstName := p.Args["firstName"].(string)
-				lastName := p.Args["lastName"].(string)
-				return firstName + " " + lastName, nil
-			},
-		},
-	},
-})
-
-// Schema is the GraphQL schema served by the server.
-var Schema, _ = graphql.NewSchema(graphql.SchemaConfig{
-	Query: queryType,
-})
+// Host is the connection string for MongoDB.
+const Host string = "localhost"
 
 func init() {
-	// populate "database" with posts.
-	post1 := Post{Title: "a", Views: "b"}
-	post2 := Post{Title: "b", Views: "c"}
-	PostList = append(PostList, post1, post2)
+	s1 := rand.NewSource(time.Now().UnixNano())
+	r1 := rand.New(s1)
+
+	log.Println("Seeding mock data to MongoDB")
+	session, err := mgo.Dial(Host)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer session.Close()
+	collection := session.DB("graphql").C("post")
+	err = collection.Insert(&schema.Post{Title: "Learn Golang + GraphQL + Relay", Views: r1.Intn(100)},
+		&schema.Post{Title: "Tutorial: How to build a GraphQL server", Views: r1.Intn(100)},
+		&schema.Post{Title: "The Go Programming Language", Views: r1.Intn(100)},
+		&schema.Post{Title: "Microservices in Go", Views: r1.Intn(100)},
+		&schema.Post{Title: "Programming in Go: Creating Applications for the 21st Century", Views: r1.Intn(100)})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
 	// Creates a GraphQL-go HTTP handler with the previously defined schema and we also set it to return pretty JSON output
 	handler := handler.New(&handler.Config{
-		Schema: &Schema,
+		Schema: &schema.Schema,
 		Pretty: true,
 	})
 
@@ -125,9 +64,25 @@ func main() {
 	go func() {
 		for _ = range signalChan {
 			log.Println("Received an interrupt, stopping GraphQL Server...")
+			cleanup()
 			cleanupDone <- true
 		}
 	}()
 
 	<-cleanupDone
+}
+
+func cleanup() {
+	log.Println("Cleaning up mock data...")
+	session, err := mgo.Dial(Host)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer session.Close()
+
+	collection := session.DB("graphql").C("post")
+	_, err = collection.RemoveAll(bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
