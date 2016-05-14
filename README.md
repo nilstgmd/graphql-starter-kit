@@ -33,7 +33,7 @@ Using GraphiQL:
 ```
 
 Using cURL:
-```
+```sh
 curl -XPOST http://localhost:8080/graphql \
 -H 'Content-Type: application/graphql' \
 -d 'query Root{ author(firstName:"Chuck",lastName:"Norris"){firstName,lastName,posts{title,views}},getFortuneCookie }'
