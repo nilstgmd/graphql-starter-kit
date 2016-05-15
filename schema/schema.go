@@ -93,7 +93,7 @@ var queryType = graphql.NewObject(graphql.ObjectConfig{
 				var firstName string
 
 				iter := session.Query(
-					`SELECT name, firstName FROM author WHERE name = ? AND firstName = ? ALLOW FILTERING;`,
+					`SELECT name, firstName FROM graphql.author WHERE name = ? AND firstName = ? ALLOW FILTERING;`,
 					p.Args["lastName"].(string),
 					p.Args["firstName"].(string)).Iter()
 				for iter.Scan(&name, &firstName) {

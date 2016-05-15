@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/graphql-go/handler"
 	"github.com/nilstgmd/graphql-starter-kit/cassandra"
@@ -33,7 +34,7 @@ func main() {
 
 	signalChan := make(chan os.Signal, 1)
 	cleanupDone := make(chan bool)
-	signal.Notify(signalChan, os.Interrupt)
+	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	go func() {
 		for _ = range signalChan {
 			log.Println("Received an interrupt, stopping GraphQL Server...")

@@ -38,8 +38,12 @@ dockerbuild:
 
 .PHONY: dockerrun
 dockerrun:
-	@docker run -d -p 8080:8080 --name $(BINARY) --link mongo:mongo $(TAG)
+	@docker run -d -p 8080:8080 --name $(BINARY) --link mongo:mongo --link cassandra:cassandra $(TAG)
 
 .PHONY: mongo
 mongo:
 	@docker run --name mongo -d mongo
+
+.PHONY: cassandra
+cassandra:
+	@docker run --name cassandra -d cassandra:3.5
