@@ -6,7 +6,8 @@ import (
 	"net/http"
 
 	"github.com/graphql-go/graphql"
-	"gopkg.in/mgo.v2"
+	"github.com/nilstgmd/graphql-starter-kit/cassandra"
+	"github.com/nilstgmd/graphql-starter-kit/mongo"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -26,6 +27,12 @@ type Post struct {
 	Views int    `json:"views"`
 }
 
+// Author representation.
+type Author struct {
+	Name      string `json:"lastName"`
+	FirstName string `json:"firstName"`
+}
+
 var postType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Post",
 	Fields: graphql.Fields{
@@ -43,28 +50,18 @@ var authorType = graphql.NewObject(graphql.ObjectConfig{
 	Fields: graphql.Fields{
 		"firstName": &graphql.Field{
 			Type: graphql.String,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return "Peter", nil
-			},
 		},
 		"lastName": &graphql.Field{
 			Type: graphql.String,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return "Lustig", nil
-			},
 		},
 		"posts": &graphql.Field{
 			Type: graphql.NewList(postType),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				var results []Post
 
-				session, err := mgo.Dial("mongo")
-				if err != nil {
-					log.Fatal(err)
-				}
+				session, collection := mongo.Get()
 				defer session.Close()
-
-				err = session.DB("graphql").C("post").Find(bson.M{}).All(&results)
+				err := collection.Find(bson.M{}).All(&results)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -89,9 +86,25 @@ var queryType = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				firstName := p.Args["firstName"].(string)
-				lastName := p.Args["lastName"].(string)
-				return firstName + " " + lastName, nil
+				session := cassandra.Get()
+				defer session.Close()
+
+				var name string
+				var firstName string
+
+				iter := session.Query(
+					`SELECT name, firstName FROM author WHERE name = ? AND firstName = ? ALLOW FILTERING;`,
+					p.Args["lastName"].(string),
+					p.Args["firstName"].(string)).Iter()
+				for iter.Scan(&name, &firstName) {
+					return Author{FirstName: firstName, Name: name}, nil
+				}
+
+				if err := iter.Close(); err != nil {
+					log.Fatal(err)
+				}
+
+				return Author{}, nil
 			},
 		},
 		"getFortuneCookie": &graphql.Field{
