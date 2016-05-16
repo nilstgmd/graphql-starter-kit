@@ -1,0 +1,12 @@
+graphql-server:
+  image: nilstgmd/graphql-server:0.0.1
+  ports:
+    - "8080:8080"
+  links:
+    - mongo:mongo
+    - cassandra:cassandra
+  restart: unless-stopped
+mongo:
+  image: mongo
+cassandra:
+  image: cassandra:3.5

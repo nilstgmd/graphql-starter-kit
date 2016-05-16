@@ -1,3 +1,9 @@
+# Boilerplate code to setup make
+MAKEFLAGS += --warn-undefined-variables
+SHELL := bash
+.SHELLFLAGS := -eu -o pipefail -c
+.DEFAULT_GOAL := all
+
 # Watch all source files
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
@@ -12,32 +18,26 @@ TAG?=$(NAME):$(VERSION)
 
 LDFLAGS=-ldflags "-X main.version=${VERSION} -X main.buildTime=${BUILD_TIME}"
 
-.DEFAULT_GOAL: $(BINARY)
-$(BINARY): $(SOURCES)
-	@go build $(LDFLAGS) -o $(BINARY) -v
+# Docker Compose based builds
+.PHONY: all
+all: clean build run
 
 .PHONY: clean
 clean:
-	@if [ -f ${BINARY} ] ; then rm ${BINARY}; go clean ./...; fi
+	@docker-compose stop && docker-compose rm --all --force
 
-.PHONY: test
-test:
-	@go test ./...
-
-.PHONY: docker
-docker: dockerclean dockerbuild dockerrun
-
-.PHONY: dockerclean
-dockerclean:
-	@docker ps -a -q --filter ancestor=$(TAG) --format="{{.ID}}" | xargs docker stop | xargs docker rm
-
-.PHONY: dockerbuild
-dockerbuild:
+.PHONY: build
+build:
 	@env GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BINARY)
 	@docker build -t $(TAG) --rm=true $(SOURCEDIR)
 
-.PHONY: dockerrun
-dockerrun:
+.PHONY: run
+run:
+	@docker-compose up -d
+
+# Stand-alone Docker based builds
+.PHONY: $(BINARY)
+$(BINARY):
 	@docker run -d -p 8080:8080 --name $(BINARY) --link mongo:mongo --link cassandra:cassandra $(TAG)
 
 .PHONY: mongo
