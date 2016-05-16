@@ -1,6 +1,6 @@
 # GraphQL Starter Kit
 
-Golang implementation of [Tutorial: How to build a GraphQL server](https://medium.com/apollo-stack/tutorial-building-a-graphql-server-cddaa023c035#.wy5h1htxs).
+Golang implementation of a GraphQL server using Cassandra, MongoDB and REST backends inspired by [Tutorial: How to build a GraphQL server](https://medium.com/apollo-stack/tutorial-building-a-graphql-server-cddaa023c035#.wy5h1htxs).
 
 ## Quick Start
 
