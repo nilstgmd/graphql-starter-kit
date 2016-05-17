@@ -15,6 +15,10 @@ cd  $GOPATH/src/github.com/nilstgmd/graphql-starter-kit/ && make all
 ```
 Use the GraphiQL IDE in your browser `http://localhost:8080/` or the API `http://localhost:8080/graphql?query=...` to execute queries against the server.
 
+<p align="center">
+  <img width=600 src="https://raw.githubusercontent.com/nilstgmd/graphql-starter-kit/master/images/graphiql.png" alt="GraphiQL IDE"/>
+</p>
+
 ## Example
 
 Using GraphiQL:
