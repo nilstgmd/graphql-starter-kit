@@ -35,12 +35,17 @@ func Init() {
 	}
 
 	// Insert some data...
-	err = session.Query(`INSERT INTO graphql.author (id, name, firstName) VALUES (?, ?, ?)`, gocql.TimeUUID(), "Norris", "Chuck").Exec()
+	err = session.Query(`INSERT INTO graphql.author (id, name, firstName) VALUES (?, ?, ?)`, gocql.TimeUUID(), "Pike", "Rob").Exec()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = session.Query(`INSERT INTO graphql.author (id, name, firstName) VALUES (?, ?, ?)`, gocql.TimeUUID(), "MacGyver", "Angus").Exec()
+	err = session.Query(`INSERT INTO graphql.author (id, name, firstName) VALUES (?, ?, ?)`, gocql.TimeUUID(), "Gerrand", "Andrew").Exec()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = session.Query(`INSERT INTO graphql.author (id, name, firstName) VALUES (?, ?, ?)`, gocql.TimeUUID(), "Cox", "Russ").Exec()
 	if err != nil {
 		log.Fatal(err)
 	}

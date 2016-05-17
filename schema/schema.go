@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -34,34 +35,44 @@ type Author struct {
 }
 
 var postType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Post",
+	Name:        "Post",
+	Description: "A post of a blog.",
 	Fields: graphql.Fields{
 		"title": &graphql.Field{
-			Type: graphql.String,
+			Type:        graphql.String,
+			Description: "The post's title.",
 		},
 		"views": &graphql.Field{
-			Type: graphql.Int,
+			Type:        graphql.Int,
+			Description: "How many view the post has.",
 		},
 	},
 })
 
 var authorType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Author",
+	Name:        "Author",
+	Description: "The author of blog post.",
 	Fields: graphql.Fields{
 		"firstName": &graphql.Field{
-			Type: graphql.String,
+			Type:        graphql.String,
+			Description: "The author's first name.",
 		},
 		"lastName": &graphql.Field{
-			Type: graphql.String,
+			Type:        graphql.String,
+			Description: "The auhtor's last name.",
 		},
 		"posts": &graphql.Field{
-			Type: graphql.NewList(postType),
+			Type:        graphql.NewList(postType),
+			Description: "Which posts they have written.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				var results []Post
 
+				author := p.Source.(Author)
+
 				session, collection := mongo.Get()
 				defer session.Close()
-				err := collection.Find(bson.M{}).All(&results)
+
+				err := collection.Find(bson.M{"author.firstName": author.FirstName, "author.lastName": author.Name}).All(&results)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -79,10 +90,12 @@ var queryType = graphql.NewObject(graphql.ObjectConfig{
 			Type: authorType,
 			Args: graphql.FieldConfigArgument{
 				"firstName": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type:        graphql.String,
+					Description: "The author's first name.",
 				},
 				"lastName": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type:        graphql.String,
+					Description: "The author's last name.",
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -104,11 +117,14 @@ var queryType = graphql.NewObject(graphql.ObjectConfig{
 					log.Fatal(err)
 				}
 
-				return Author{}, nil
+				return nil, fmt.Errorf("Could not find an author with firstName=%s and lastName=%s",
+					p.Args["firstName"].(string),
+					p.Args["lastName"].(string))
 			},
 		},
 		"getFortuneCookie": &graphql.Field{
-			Type: graphql.String,
+			Type:        graphql.String,
+			Description: "Get some fortune today.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				response, err := http.Get("http://fortunecookieapi.com/v1/cookie")
 				if err != nil {

@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	// Creates a GraphQL-go HTTP handler with the previously defined schema and we also set it to return pretty JSON output
+	// Creates a GraphQL-go HTTP handler with the defined schema
 	handler := handler.New(&handler.Config{
 		Schema: &schema.Schema,
 		Pretty: true,
@@ -28,7 +28,7 @@ func main() {
 	http.Handle("/", fs)
 
 	go func() {
-		log.Println("Starting GraphQL Server on localhost:8080")
+		log.Println("Starting GraphQL Server on http://localhost:8080/")
 		http.ListenAndServe(":8080", nil)
 	}()
 

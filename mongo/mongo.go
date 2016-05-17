@@ -20,11 +20,19 @@ func Init() {
 	session, collection := Get()
 	defer session.Close()
 
-	err := collection.Insert(bson.M{"title": "Learn Golang + GraphQL + Relay", "views": r1.Intn(100)},
-		bson.M{"title": "Tutorial: How to build a GraphQL server", "views": r1.Intn(100)},
-		bson.M{"title": "The Go Programming Language", "views": r1.Intn(100)},
-		bson.M{"title": "Microservices in Go", "views": r1.Intn(100)},
-		bson.M{"title": "Programming in Go: Creating Applications for the 21st Century", "views": r1.Intn(100)})
+	_, err := collection.RemoveAll(bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Example from https://blog.golang.org
+	err = collection.Insert(bson.M{"title": "Go 1.6 is released", "views": r1.Intn(100), "author": bson.M{"firstName": "Andrew", "lastName": "Gerrand"}},
+		bson.M{"title": "Six years of Go", "views": r1.Intn(100), "author": bson.M{"firstName": "Andrew", "lastName": "Gerrand"}},
+		bson.M{"title": "Testable Examples in Go", "views": r1.Intn(100), "author": bson.M{"firstName": "Andrew", "lastName": "Gerrand"}},
+		bson.M{"title": "Go, Open Source, Community", "views": r1.Intn(100), "author": bson.M{"firstName": "Russ", "lastName": "Cox"}},
+		bson.M{"title": "Generating code", "views": r1.Intn(100), "author": bson.M{"firstName": "Rob", "lastName": "Pike"}},
+		bson.M{"title": "Arrays, slices (and strings): The mechanics of 'append'", "views": r1.Intn(100), "author": bson.M{"firstName": "Rob", "lastName": "Pike"}},
+		bson.M{"title": "Errors are values", "views": r1.Intn(100), "author": bson.M{"firstName": "Rob", "lastName": "Pike"}})
 	if err != nil {
 		log.Fatal(err)
 	}

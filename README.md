@@ -20,7 +20,7 @@ Use the GraphiQL IDE in your browser `http://localhost:8080/` or the API `http:/
 Using GraphiQL:
 ```javascript
 {
-  author(firstName:"Chuck", lastName: "Norris"){
+  author(firstName:"Rob", lastName: "Pike"){
     firstName
     lastName
     posts{
@@ -36,5 +36,5 @@ Using cURL:
 ```sh
 curl -XPOST http://localhost:8080/graphql \
 -H 'Content-Type: application/graphql' \
--d 'query Root{ author(firstName:"Chuck",lastName:"Norris"){firstName,lastName,posts{title,views}},getFortuneCookie }'
+-d 'query Root{ author(firstName:"Andrew",lastName:"Gerrand"){firstName,lastName,posts{title,views}},getFortuneCookie }'
 ```
