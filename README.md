@@ -9,13 +9,11 @@ Get the code:
 go get github.com/nilstgmd/graphql-starter-kit
 ```
 
-Start the Docker container running the GraphQL server, a container with Cassandra and a container with MongoDB:
+Start the Docker container running the GraphQL server, a container with Cassandra and a container with MongoDB ([showterm.io](http://showterm.io/df13d2ece08deb5cc5564)):
 ```sh
 cd  $GOPATH/src/github.com/nilstgmd/graphql-starter-kit/ && make all
 ```
 Use the GraphiQL IDE in your browser `http://localhost:8080/` or the API `http://localhost:8080/graphql?query=...` to execute queries against the server.
-
-<iframe src="http://showterm.io/df13d2ece08deb5cc5564#fast" width="640" height="480"></iframe>
 
 ## Example
 
