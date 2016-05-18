@@ -11,6 +11,8 @@ import (
 	"github.com/nilstgmd/graphql-starter-kit/cassandra"
 	"github.com/nilstgmd/graphql-starter-kit/mongo"
 	"github.com/nilstgmd/graphql-starter-kit/schema"
+
+	_ "net/http/pprof"
 )
 
 func main() {
