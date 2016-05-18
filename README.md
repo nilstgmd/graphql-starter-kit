@@ -42,3 +42,13 @@ curl -XPOST http://localhost:8080/graphql \
 -H 'Content-Type: application/graphql' \
 -d 'query Root{ author(firstName:"Andrew",lastName:"Gerrand"){firstName,lastName,posts{title,views}},getFortuneCookie }'
 ```
+
+## Extra
+
+Just because it is cool: Flamegraphs :fire:
+
+<p align="center">
+  <img width=600 src="https://raw.githubusercontent.com/nilstgmd/graphql-starter-kit/master/images/flame.png" alt="Flamegraph"/>
+</p>
+
+The GraphQL server offers a [pprof](https://golang.org/pkg/net/http/pprof/) endpoint which can be consumed to create flamegraphs with [go-torch](https://github.com/uber/go-torch).
