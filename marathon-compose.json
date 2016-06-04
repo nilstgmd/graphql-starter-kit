@@ -1,0 +1,54 @@
+{
+    "id": "graphql",
+    "groups": [
+        {
+            "id": "demo",
+            "apps": [
+                {
+                    "id": "graphql-server",
+                    "cpus": 0.5,
+                    "instances": 1,
+                    "ports": [
+                        8080
+                    ],
+                    "requirePorts": true,
+                    "container": {
+                        "docker": {
+                            "image": "nilstgmd/graphql-server:0.0.1",
+                            "network": "HOST"
+                        },
+                        "type": "DOCKER"
+                    },
+                    "dependencies": [
+                        "/graphql/demo/mongo",
+                        "/graphql/demo/cassandra"
+                    ]
+                },
+                {
+                    "id": "mongo",
+                    "cpus": 0.5,
+                    "instances": 1,
+                    "container": {
+                        "docker": {
+                            "image": "mongo",
+                            "network": "HOST"
+                        },
+                        "type": "DOCKER"
+                    }
+                },
+                {
+                    "id": "cassandra",
+                    "cpus": 0.5,
+                    "instances": 1,
+                    "container": {
+                        "docker": {
+                            "image": "cassandra:3.5",
+                            "network": "HOST"
+                        },
+                        "type": "DOCKER"
+                    }
+                }
+            ]
+        }
+    ]
+}
